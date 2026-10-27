@@ -27,7 +27,7 @@ commit = "0ec2ffe363346ece896173e92b49a6cc595d9c73"
 hash_algorithm = "sha256"
 
 # Stage IDs are the file stems. The toolkit has no stable stage IDs of its
-# own (see "Open questions" in docs/toolkit-workflow.md).
+# own (tracked in sumau/GC3-AI-SAST-Toolkit#1).
 #
 # `order` and `mandatory` apply within a stage's `mode`: a run uses either
 # the staged stages or the one-shot prompt, never both, so the one-shot

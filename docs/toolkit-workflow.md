@@ -167,7 +167,7 @@ The staged order is linear, but two stages end with a recommendation that may se
 - Stage 03 states a recommended next phase (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:620-622`).
 - After remediation, the relevant staged prompt is re-run against the fixed code (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/reporting-standards.md:158-160`).
 
-The toolkit does not say how these recommendations map onto re-running stages. See [Open questions](#open-questions).
+The toolkit does not say how these recommendations map onto re-running stages. The question is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1); how the runner handles these recommendations is under steps 2 and 5 in issue #2.
 
 ## One-shot mode
 
@@ -210,7 +210,7 @@ Related closed vocabularies:
 
 The same four families are restated, almost word for word, in the one-shot prompt (`vendor/gc3-ai-sast-toolkit/1-prompts/one-shot-minimum-sast-prompt.md:43-90`) and as the allowed values of the report template's evidence-status table (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:144-154`). Stage 03 requires them in an evidence classification table in every report (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:28-49`), and stage 04 normalises near-synonyms to them (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:99-114`).
 
-Several other label sets appear elsewhere and do not map cleanly onto stage 00. They are listed in [Open questions](#open-questions).
+Several other label sets appear elsewhere and do not map cleanly onto stage 00. How they map onto stage 00's labels is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
 
 ## Candidates, promotion and confirmation
 
@@ -242,7 +242,7 @@ Stage 04 checks the negative-control result is present before a report can be sh
 - **Independence:** ideally a different tool or model from discovery. Self-confirmation is allowed but must be flagged, and is a weaker signal (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:99`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:105`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:193-199`, `vendor/gc3-ai-sast-toolkit/CLAUDE.md:34`).
 - **Gate on status:** confirmation, including the negative control, must run before a report moves from Draft to Submitted (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:33`).
 
-The minimum number of confirmation prompts differs between files; see [Open questions](#open-questions).
+The minimum number of confirmation prompts differs between files; which one is binding is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
 
 ## The reporting bundle
 
@@ -286,43 +286,11 @@ The guide's ground rules apply throughout: apply the run scope's threshold, no c
 
 ### Relationship to stage 03's human reports
 
-Stage 03 also produces a Markdown human report per finding, with its own structure: a decision snapshot, a human summary, and eighteen required sections (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:381-418`). That structure is not the template's seventeen sections, and stage 03 never mentions the template or the filling guide. The two overlap (evidence status, disclosure status, confirmation, remediation, validation, claims control) but are not the same document. See [Open questions](#open-questions).
+Stage 03 also produces a Markdown human report per finding, with its own structure: a decision snapshot, a human summary, and eighteen required sections (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:381-418`). That structure is not the template's seventeen sections, and stage 03 never mentions the template or the filling guide. The two overlap (evidence status, disclosure status, confirmation, remediation, validation, claims control) but are not the same document. How they relate is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
 
 ## Open questions
 
-### For the toolkit maintainers
+Open questions are tracked in issues, not in this document:
 
-Tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1): questions 1, 2 and 13 are in its draft upstream proposal, and the rest are listed under "Methodology questions for the maintainers".
-
-1. **No prompt-pack version or releases.** Every run must record a prompt-pack version (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:37-46`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:42`), but the toolkit has no tags, releases or version file (see [What versions exist](#what-versions-exist)). The maintainers are being asked to tag versioned releases (ADR 0001). Can they confirm that a release tag is what reports should record as the prompt-pack version?
-2. **No stable prompt IDs.** Runs must record "prompt IDs used" (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:43`), but prompts are identified only by file name and a heading such as "Prompt 1" (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:1`). The one-shot prompt and the confirmation prompts G1 to G4 have no number. Could each prompt carry a stable ID, ideally in the machine-readable manifest suggested in ADR 0001?
-3. **No run-scope format.** The run scope is used by every stage, but its fields and format are not defined in the repository (see [Things every stage relies on](#things-every-stage-relies-on)). Could a minimal list of required fields, or a template, be added?
-4. **How stage 00 is applied.** The README says to "prime" the agent with stage 00 before any substantive prompt (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:9`), and stages 01 to 03 say to "apply" it (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:9`). Is stage 00 a separate turn whose response matters, or context sent with every later stage? Stage 04 does not say to apply it (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:1-26`); is that intended?
-5. **Two report structures.** Stage 03's human report has eighteen sections (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:395-414`); the template has seventeen different ones (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:22-386`). Is the template a separate escalation artefact produced after stage 04, a replacement for stage 03's report, or something else?
-6. **Minimum number of confirmation prompts.** Stage 02 drafts at least four (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:411-416`). The template asks for at least two generic prompts plus the negative control (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:184`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:378`). The guide adds the matching type-specific prompts (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:94`). Which is the binding minimum?
-7. **Overlapping label sets.** Besides the four families in stage 00, there are:
-   - stage 02's "confidence discipline" table, which includes labels not in stage 00 such as a bootstrap-dependent state and a runtime-disconfirmed state (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:194-209`);
-   - stage 03's upper-case evidence-discipline labels (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:255-264`) and the status values it suggests for OPTRS (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:327`);
-   - the reporting standards' seven "evidence states", including scanner-supported, conditional and not promoted (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/reporting-standards.md:33-47`);
-   - triage's `deployment-inferred` and `private/config-dependent` (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:200`).
-
-   How do these map onto stage 00's labels, and which are canonical?
-8. **Small spelling differences.** Production impact is `not-confirmed` in stage 00 (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:98`) but `not confirmed` in stage 03 and the template (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:62`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:162`). The same is true of `not established`. Which spelling is canonical?
-9. **Reporting decisions differ.** Stage 03 allows twelve reporting decisions (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:533-546`); the reporting standards list eleven, including "not promoted", which stage 03 does not have (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/reporting-standards.md:87-99`). Stage 03's cross-prompt contract has a third list (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:131-143`). Which is canonical?
-10. **Whole-exercise report file name.** `whole-exercise-executive-report.md` in stage 03 (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:499`) versus `whole-exercise-report.md` in the reporting standards (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/reporting-standards.md:22`).
-11. **Stage 04 inputs not produced earlier.** Stage 04 expects promoted-findings, promoted-chains, validation-candidate, local-validation-log and assumptions registers (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:49-54`). No earlier stage names these as outputs. Are they views of the assessment register?
-12. **Scope re-anchor list.** Stage 00's fixed task list (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:30`) does not include the combined task lines used by triage and the one-shot prompt (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:14`, `vendor/gc3-ai-sast-toolkit/1-prompts/one-shot-minimum-sast-prompt.md:12`). A program checking the line needs to know which forms are valid.
-13. **Licence.** The toolkit has no licence file (ADR 0001). Could the maintainers state one?
-
-### For the runner's design (later steps)
-
-These are not toolkit questions; they are decisions this repo has to make, noted here so they are not lost. Each is also listed under the step it affects in issue #2.
-
-1. **Execution boundary (steps 3 and 6).** The toolkit allows local validation, dependency installation and scanner pre-passes when approved (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:19`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:101`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:354-367`). The runner never executes target code, so runner-produced results can never legitimately carry `locally-validated` or `deployed-validated`. Should scanner output be accepted only as a user-supplied input file?
-2. **Agentic versus single-call stages (step 3).** The prompts assume an agent that can read files on demand and write output files (`vendor/gc3-ai-sast-toolkit/1-prompts/one-shot-minimum-sast-prompt.md:170`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:19-20`). A runner sending one prompt plus assembled context needs a strategy for context selection and for parsing multiple artefacts from one response.
-3. **Which instruction file to send (step 3).** `CLAUDE.md` and `AGENTS.md` are meant to be identical (`vendor/gc3-ai-sast-toolkit/AGENTS.md:3`). The runner should send one, and could check that the two still match.
-4. **Stop/continue recommendations (steps 2 and 5).** Stages 01 and 02 can recommend going back or sideways (see [Branching and loops](#branching-and-loops)). The state model must decide whether these are recorded only, or offered to the user as transitions. The runner must not act on them without the user.
-5. **Multi-repository scope (step 2).** Stages 01 and 02 assume a repository set with `R###` IDs (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:100`); the one-shot default is one repository (`vendor/gc3-ai-sast-toolkit/1-prompts/one-shot-minimum-sast-prompt.md:117`). `ai-sast-run init` currently plans to take one directory.
-6. **Human-only inputs (steps 2 and 7).** The run scope, approval and sanitisation state (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:97-98`), reporter identity, the report-ID scheme, and the human validation status field that stage 03 leaves for a person (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:41`) must come from the user. The runner must leave them visibly empty, never fill them in.
-7. **Confirmation independence (steps 3 and 8).** The toolkit prefers a different tool or model for confirmation. The runner's provider configuration should allow a separate confirmation model, and must record honestly when it is the same.
-8. **Mechanically checkable rules (step 6).** Candidates for deterministic checks include: the scope re-anchor line, closed label vocabularies, `file:line` citations, the stable ID formats, required register fields, separation of severity and confidence, and stage 04's count reconciliation.
+- **For the toolkit maintainers:** [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1). Releases, stable prompt IDs and the licence are in its draft upstream proposal; questions about the methodology itself are under "Methodology questions for the maintainers".
+- **For the runner's design:** issue #2, listed as "Open from step 1" under the step each one affects.
