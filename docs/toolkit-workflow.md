@@ -292,6 +292,8 @@ Stage 03 also produces a Markdown human report per finding, with its own structu
 
 ### For the toolkit maintainers
 
+Tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1): questions 1, 2 and 13 are in its draft upstream proposal, and the rest are listed under "Methodology questions for the maintainers".
+
 1. **No prompt-pack version or releases.** Every run must record a prompt-pack version (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:37-46`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:42`), but the toolkit has no tags, releases or version file (see [What versions exist](#what-versions-exist)). The maintainers are being asked to tag versioned releases (ADR 0001). Can they confirm that a release tag is what reports should record as the prompt-pack version?
 2. **No stable prompt IDs.** Runs must record "prompt IDs used" (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:43`), but prompts are identified only by file name and a heading such as "Prompt 1" (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:1`). The one-shot prompt and the confirmation prompts G1 to G4 have no number. Could each prompt carry a stable ID, ideally in the machine-readable manifest suggested in ADR 0001?
 3. **No run-scope format.** The run scope is used by every stage, but its fields and format are not defined in the repository (see [Things every stage relies on](#things-every-stage-relies-on)). Could a minimal list of required fields, or a template, be added?
@@ -314,7 +316,7 @@ Stage 03 also produces a Markdown human report per finding, with its own structu
 
 ### For the runner's design (later steps)
 
-These are not toolkit questions; they are decisions this repo has to make, noted here so they are not lost.
+These are not toolkit questions; they are decisions this repo has to make, noted here so they are not lost. Each is also listed under the step it affects in issue #2.
 
 1. **Execution boundary (steps 3 and 6).** The toolkit allows local validation, dependency installation and scanner pre-passes when approved (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:19`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:101`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:354-367`). The runner never executes target code, so runner-produced results can never legitimately carry `locally-validated` or `deployed-validated`. Should scanner output be accepted only as a user-supplied input file?
 2. **Agentic versus single-call stages (step 3).** The prompts assume an agent that can read files on demand and write output files (`vendor/gc3-ai-sast-toolkit/1-prompts/one-shot-minimum-sast-prompt.md:170`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:19-20`). A runner sending one prompt plus assembled context needs a strategy for context selection and for parsing multiple artefacts from one response.
