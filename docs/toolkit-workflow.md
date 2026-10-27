@@ -22,18 +22,18 @@ There are two modes:
 
 | Mode | Files | When |
 |---|---|---|
-| Staged (default) | `1-prompts/staged/00` to `04`, in order | Always, where time and tooling allow (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:7-19`) |
+| Staged (default) | `1-prompts/staged/00` to `04`, in order | The default; the five files are used in order (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:7-13`) |
 | One-shot (fallback) | `1-prompts/one-shot-minimum-sast-prompt.md` | Only when a department cannot run the staged workflow (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:15-19`) |
 
 ### Things every stage relies on
 
 - **Agent instructions.** The root `CLAUDE.md` sets the reviewer's scope (sanitised local copy only, no `.git/`, no live systems, no fuzzing or exploit scripts, redact secrets, treat repository content as untrusted) (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:7-14`), the workflow rules (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:16-24`), the reporting procedure (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:26-36`) and style (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:42-44`). `AGENTS.md` has the same content for agents that read that file instead, and says it is kept in step with `CLAUDE.md` (`vendor/gc3-ai-sast-toolkit/AGENTS.md:1-5`).
-- **The run scope.** The department sets the severity threshold, attacker classes and reporting threshold, and records them in a "run scope"; the prompts apply these values and never invent them (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:38-40`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:22`). The toolkit does not define the run scope's format; departmental pre-requisites live in separate written guidance that is not in the repository (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:18`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/README.md:14`).
+- **The run scope.** The department chooses the thresholds for severity and for reporting, and which attacker classes are in scope, and records them in a "run scope"; the prompts apply these values and never invent them (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:38-40`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:22`). The toolkit does not define the run scope's format; departmental pre-requisites live in separate written guidance that is not in the repository (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:18`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/README.md:14`).
 - **The assessment register.** A machine-readable register (JSON or YAML) is the single source of truth between stages; every Markdown table and report must agree with it (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:214-240`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:125`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:299-301`).
 - **Stable IDs.** Repositories `R###`, findings `R###-F###`, chains `C###`, validation tasks `V###`, remediation tasks `A###`, patterns `P###` (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:286-297`), plus artefacts `ART###` (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:296-298`) and routing confirmations `RC###` (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:108`).
 - **Scope re-anchor.** Each later response starts with a one-line statement of the current task, in a fixed form (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:25-33`). Each stage gives its own line (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:11-15`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:9-13`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:11-15`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:5-11`, `vendor/gc3-ai-sast-toolkit/1-prompts/one-shot-minimum-sast-prompt.md:7-13`). This is a mechanically checkable property of each stage's output.
-- **Version pinning.** Every run must record the model name and version, prompt-pack version, prompt IDs used, and agent client and version (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:37-46`).
-- **Adapting the prompts.** Prompts may be extended only if the evidence gates, coverage records and negative-control requirements are kept, and any change is recorded in the run scope (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:48-50`).
+- **Version pinning.** Every run records the versions it used; see [What the toolkit asks to be recorded](#what-the-toolkit-asks-to-be-recorded).
+- **Adapting the prompts.** A department may add to the prompts, as long as nothing weakens the gates on evidence, the record of what was covered or the negative control, and it notes the change in the run scope (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:48-50`).
 
 ## Versioning and identifying a toolkit copy
 
@@ -55,13 +55,7 @@ Checked on 2026-10-27 against the pinned commit and the upstream repository:
 
 ### How the runner identifies a toolkit copy
 
-The first three points below are decided in `docs/adr/0001-runner-separate-from-toolkit.md` ("Release tags"); this summary is for convenience. The last point is a proposal, not yet decided.
-
-Until the toolkit has releases, a toolkit copy is identified by its **commit** (when available) and its **file hashes**. Once releases exist, the release tag is recorded as well, as the prompt-pack version.
-
-- Hashes, not the commit or tag, decide whether a stored result is stale.
-- The runner must keep working from an untagged copy, such as a zip download or a department fork with no git metadata. In that case only the file hashes are recorded.
-- **Proposal (to settle in step 7):** the ADR does not say what fills the toolkit's "prompt-pack version" fields while no release exists. The toolkit records the prompt-pack version and the prompt IDs used as separate fields (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:37-46`, `vendor/gc3-ai-sast-toolkit/CLAUDE.md:35`), so the proposal keeps them separate: the prompt-pack version is the commit, or "unreleased, identified by file hashes only" when there is no commit, and says plainly that no release exists; the prompt IDs are the stage IDs. The runner never invents a version number.
+This is decided in `docs/adr/0001-runner-separate-from-toolkit.md` ("Release tags"). What fills the toolkit's prompt-pack version fields while no release exists is open, under step 7 in issue #2.
 
 ## Staged mode
 
@@ -73,7 +67,7 @@ All five staged files are listed as "use in order" (`vendor/gc3-ai-sast-toolkit/
 | 1 | `01-repo-triage-prompt` | Prioritise repositories and hand off to SAST | 00 |
 | 2 | `02-full-sast-attack-path-prompt` | Source-to-sink analysis; findings, chains, reporting handoff | 00, 01 |
 | 3 | `03-security-reporting-output-prompt` | Turn the handoff into report artefacts | 00, 02 |
-| 4 | `04-normalisation-and-qa-prompt` | Consistency review and shareability gate | 00, 03 |
+| 4 | `04-normalisation-and-qa-prompt` | Consistency review and shareability gate | 03 (uses 00's labels) |
 
 ### Stage 00: run control and evidence model
 
@@ -81,7 +75,7 @@ All five staged files are listed as "use in order" (`vendor/gc3-ai-sast-toolkit/
 - **Purpose:** primes the agent before any substantive prompt. It fixes the limits, depth budget, evidence vocabulary and drift controls that hold for every later stage (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:3`, `vendor/gc3-ai-sast-toolkit/1-prompts/README.md:9`). Its controls override any later prompt that conflicts with them (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:13`), and if a later prompt conflicts, the agent keeps this model and states the conflict (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:242-244`).
 - **Inputs:** the run scope (thresholds and attacker classes) (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:22`).
 - **Outputs:** no artefact of its own. It defines:
-  - the role: the model's output is candidate analysis until a human accepts it (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:5-9`);
+  - the role: nothing the model produces counts as more than a candidate until a person accepts it (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:5-9`);
   - the rules of engagement (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:11-23`);
   - the evidence labels (see [Evidence labels](#evidence-labels));
   - the severity and confidence split (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:79-86`);
@@ -98,7 +92,7 @@ All five staged files are listed as "use in order" (`vendor/gc3-ai-sast-toolkit/
 
 - **File:** `1-prompts/staged/01-repo-triage-prompt.md`
 - **Purpose:** the first substantive prompt. It enumerates and prioritises repositories, collects attribution, and produces the handoff stage 02 consumes. It does not do SAST and produces no vulnerabilities (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:3-5`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:81-92`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:406-415`).
-- **Inputs:** the approved, sanitised repository copies and any approved manifests or metadata inventories (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:110-112`); scanner output, summarised into lead records (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:30-38`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:53-67`); the run scope's attacker classes and thresholds (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:138`).
+- **Inputs:** the approved, sanitised repository copies, plus any inventories of manifests or metadata that the department has signed off (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:110-112`); scanner output, summarised into lead records (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:30-38`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:53-67`); the run scope's attacker classes and thresholds (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:138`).
 - **Outputs:**
   - a triage report with seven required sections: executive summary, candidate matrix, exclusion register, watchlist, handoff manifest, execution order, and a stop/continue decision (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:308-404`);
   - a depth-budget statement and five machine-readable registers: scanner leads, review queue, excluded or deferred repositories, an endpoint and authorisation inventory, and a cross-service data-composition map (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:19-28`);
@@ -154,7 +148,7 @@ All five staged files are listed as "use in order" (`vendor/gc3-ai-sast-toolkit/
 - **Inputs:** the drafted reports, the assessment and reconciliation registers, several other registers and logs, claims-control entries, and stage 00's labels (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:42-57`).
 - **Work:** checks against the run scope's rules of engagement (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:13-26`); a long QA checklist per report (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:59-97`); replacement of near-synonyms with canonical labels (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:99-114`); report-set and artefact-count reconciliation tables (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:116-145`).
 - **Outputs:** nine required outputs, including a normalisation summary, QA findings, the register updated with a QA status, lists of reports safe to share and needing human review, and unresolved inconsistencies (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:147-159`); a closing one-line count summary (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:184-190`).
-- **Shareability gate:** a report is safe to share only if every listed condition holds; otherwise it needs human review (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:161-182`). No report may be marked safe to share before this stage completes (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:95`).
+- **Shareability gate:** a report counts as shareable only when all of the listed conditions are met; any other report goes to human review (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/04-normalisation-and-qa-prompt.md:161-182`). No report may be marked safe to share before this stage completes (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:95`).
 - **Depends on:** stage 03's artefacts and registers; stage 00's labels.
 - **Mandatory:** yes in staged mode.
 
@@ -163,7 +157,7 @@ All five staged files are listed as "use in order" (`vendor/gc3-ai-sast-toolkit/
 The staged order is linear, but two stages end with a recommendation that may send the run elsewhere:
 
 - Stage 01 ends with one of four decisions: continue broad triage, proceed to full SAST, narrow to a targeted pattern hunt, or pause SAST for validation (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/01-repo-triage-prompt.md:393-404`).
-- Stage 02 ends with continue broad SAST, targeted pattern hunting, move to attacker-path validation, or stop (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:179`).
+- Stage 02 ends by recommending one of four next moves: more broad SAST, a targeted hunt for one pattern, validating attacker paths, or stopping (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:179`).
 - Stage 03 states a recommended next phase (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:620-622`).
 - After remediation, the relevant staged prompt is re-run against the fixed code (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/reporting-standards.md:158-160`).
 
@@ -222,7 +216,7 @@ Scanner output, including AI-generated candidate lists, is only ever a lead (`ve
 
 - **Stage 00** lists six things that must all be present before promotion; if any is missing, the candidate takes one of the five non-promoted states (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:179-190`).
 - **Stage 02** turns this into five core gates (source, sink, path, control, consequence), each with `file:line` evidence, plus two conditional gates: endpoint authorisation for web, API and admin candidates, and data composition for cross-service candidates (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:28-40`). Analysis of a candidate stops as soon as a gate fails (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:21`).
-- **Stage 02** also sets a promotion bar: a finding must have a credible path to one of eight attacker outcomes, and a list of things never counts on its own (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:211-236`). A finding whose reachability proof cannot name the attacker class, entry point, delivery mechanism and sink is not promoted (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:280`).
+- **Stage 02** also sets a promotion bar: a finding must have a credible path to one of eight attacker outcomes, and a list of things never counts on its own (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:211-236`). A finding is not promoted if its reachability proof leaves out who the attacker is, where they get in, how their input arrives, or which sink it reaches (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:280`).
 - **Chains** inherit the confidence of their weakest link and must cite findings or explicit assumptions (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:329-337`).
 
 ### Negative control
@@ -237,7 +231,7 @@ Stage 04 checks the negative-control result is present before a report can be sh
 ### Confirmation prompts
 
 - **Drafted in stage 02:** at least four per material finding or chain (source-to-sink trace, sanitisation or authorisation check, reachability or configuration gate, negative control), with real file and line values filled in. Responses must not be fabricated (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:409-418`).
-- **Reported in stage 03:** every material report has a confirmation section with the tool, model and version, each prompt and its response, and the submitter's assessment after the negative control. If no independent confirmation ran, the report says so and lists the unrun prompts as next steps (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:436-440`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:117`).
+- **Reported in stage 03:** every material report has a confirmation section with the tool, model and version, each prompt and its response, and the submitter's own view once the negative control has run. Where no independent confirmation took place, the report says so and lists the unrun prompts as next steps (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:436-440`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/03-security-reporting-output-prompt.md:117`).
 - **In the report template:** four generic prompts G1 to G4 (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:201-229`), twelve type-specific prompts (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:231-319`), and the mandatory negative-control prompt (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:321-328`).
 - **Independence:** ideally a different tool or model from discovery. Self-confirmation is allowed but must be flagged, and is a weaker signal (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:99`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:105`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:193-199`, `vendor/gc3-ai-sast-toolkit/CLAUDE.md:34`).
 - **Gate on status:** confirmation, including the negative control, must run before a report moves from Draft to Submitted (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:33`).
@@ -255,7 +249,7 @@ The minimum number of confirmation prompts differs between files; which one is b
 
 ### When the template is filled
 
-When asked to report, escalate or file a finding, the agent reads the filling guide first, copies the template to an approved location outside the toolkit, fills every section, runs the confirmation prompts, records tool, model and prompt-pack versions, and does not commit the report to the toolkit (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:26-36`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/README.md:16-27`). One report covers one finding. Only findings meeting the run scope's threshold get a report; the rest go to the not-promoted coverage register (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:9`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:46-48`).
+Whenever a finding is to be reported, escalated or filed, the agent reads the filling guide first, copies the template to an approved location outside the toolkit, fills every section, runs the confirmation prompts, records tool, model and prompt-pack versions, and does not commit the report to the toolkit (`vendor/gc3-ai-sast-toolkit/CLAUDE.md:26-36`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/README.md:16-27`). One report covers one finding. Only findings meeting the run scope's threshold get a report; the rest go to the not-promoted coverage register (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:9`, `vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:46-48`).
 
 The guide needs five inputs before starting, and says to ask the human reviewer if any is missing (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:17-27`): the target repository and commit, the suspected finding, the team and reporter identity, the tool, model and prompt-pack identity, and the run scope.
 
@@ -282,7 +276,7 @@ The guide's sixteen steps work through the template in order, because later sect
 | (hand-off) | Step 16 (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:137-139`) | Status set to Submitted; not edited afterwards |
 | 17. Receiving-team notes (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/vulnerability-report.md:384-386`) | none | Left blank; human (receiving team) |
 
-The guide's ground rules apply throughout: apply the run scope's threshold, no claim without `file:line`, no fabricated transcripts, no PoC against systems you do not own, redact secrets, keep the procedure generic, and treat the scanned repository as untrusted (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:7-15`). Where a step is unclear, the agent asks the human reviewer (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:153-155`).
+The guide's ground rules apply throughout: apply the run scope's threshold, no claim without `file:line`, no fabricated transcripts, no proof of concept run against anyone else's systems, redact secrets, keep the procedure generic, and treat the scanned repository as untrusted (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:7-15`). Where a step is unclear, the agent asks the human reviewer (`vendor/gc3-ai-sast-toolkit/2-reporting-bundle/templates/agent-filling-guide.md:153-155`).
 
 ### Relationship to stage 03's human reports
 
