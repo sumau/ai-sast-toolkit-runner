@@ -1,0 +1,113 @@
+# Draft manifest of the GC3 AI SAST Toolkit, as the runner depends on it.
+#
+# Status: draft (step 1 of issue #2). Nothing reads this file yet.
+#
+# This file holds paths, IDs, order and content hashes only. It must never
+# contain toolkit prompt text. See docs/adr/0001-runner-separate-from-toolkit.md
+# and docs/toolkit-workflow.md.
+#
+# Hashes are SHA-256 of the raw file bytes, as `sha256sum` prints them.
+# Every file tracked in the toolkit is listed, so a new, changed or deleted
+# file is always visible to drift detection.
+
+# The toolkit has no tags or releases yet (checked 2026-10-27), so this copy
+# is identified by commit and file hashes. Add `release` once releases exist.
+# Hashes, not the commit or release, decide staleness.
+[toolkit]
+repository = "https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit"
+commit = "0ec2ffe363346ece896173e92b49a6cc595d9c73"
+
+# Stage IDs are the file stems. The toolkit has no stable stage IDs of its
+# own (tracked in sumau/GC3-AI-SAST-Toolkit#1). `order` is the toolkit's
+# "use in order" list (1-prompts/README.md:7-13).
+
+[[stages]]
+id = "00-run-control-and-evidence-model"
+order = 0
+path = "1-prompts/staged/00-run-control-and-evidence-model.md"
+
+[[stages]]
+id = "01-repo-triage-prompt"
+order = 1
+path = "1-prompts/staged/01-repo-triage-prompt.md"
+
+[[stages]]
+id = "02-full-sast-attack-path-prompt"
+order = 2
+path = "1-prompts/staged/02-full-sast-attack-path-prompt.md"
+
+[[stages]]
+id = "03-security-reporting-output-prompt"
+order = 3
+path = "1-prompts/staged/03-security-reporting-output-prompt.md"
+
+[[stages]]
+id = "04-normalisation-and-qa-prompt"
+order = 4
+path = "1-prompts/staged/04-normalisation-and-qa-prompt.md"
+
+# The one-shot prompt is a fallback to the staged workflow, not a stage in it
+# (1-prompts/README.md:15-19), so it has no place in the staged order.
+[one_shot]
+id = "one-shot-minimum-sast-prompt"
+path = "1-prompts/one-shot-minimum-sast-prompt.md"
+
+[[files]]
+path = "AGENTS.md"
+sha256 = "6ee59b5c7365cd1587bf1b531e9d8a522a99e1893ab63a65d6bd094d1de6c392"
+
+[[files]]
+path = "CLAUDE.md"
+sha256 = "a6fa645af74e488a88daf08059ea2e6f42588608d9556867a3462a985fc5217a"
+
+[[files]]
+path = "README.md"
+sha256 = "2d3ef0c54a1978ddae03200e3cedb953a6fcd28c479380b2518941732a6008ec"
+
+[[files]]
+path = "1-prompts/README.md"
+sha256 = "c2536a6416a1e8254b738d76662d263089eb7a363371e9b0558f44b3891e8f1e"
+
+[[files]]
+path = "1-prompts/one-shot-minimum-sast-prompt.md"
+sha256 = "f55e9a132a047042cd3746f35a779f061279ae9bff72b65c7659941207c27a06"
+
+[[files]]
+path = "1-prompts/staged/00-run-control-and-evidence-model.md"
+sha256 = "af0984a99f5aff5d5762d83ea10143c15d4676cf71772ccfb940189fb4a6f400"
+
+[[files]]
+path = "1-prompts/staged/01-repo-triage-prompt.md"
+sha256 = "974bf69942fa553ccd6e9d02cebe3088fa53cacac087b6eb9ed5af4ad1344204"
+
+[[files]]
+path = "1-prompts/staged/02-full-sast-attack-path-prompt.md"
+sha256 = "cac1c6772913921a8544f2b614175509f3769b74cfd49e2046d8599527549efe"
+
+[[files]]
+path = "1-prompts/staged/03-security-reporting-output-prompt.md"
+sha256 = "d855cf67499349ebdaf46d846a2fdaf3895882be6f60c909cf541c7459a798fc"
+
+[[files]]
+path = "1-prompts/staged/04-normalisation-and-qa-prompt.md"
+sha256 = "27d1911b3513f65e2f8e11761c44f79eeb52535e6ee166a2732112323223e529"
+
+[[files]]
+path = "2-reporting-bundle/README.md"
+sha256 = "e503bd8e025eaaa4efdbca747f1abe70f91d4d56326fe608a17bedb8d2e86f74"
+
+[[files]]
+path = "2-reporting-bundle/reporting-standards.md"
+sha256 = "ea6b336efc77574fa6f4e878253cf9bcce631e82b7b0197f40667323f29d4fce"
+
+[[files]]
+path = "2-reporting-bundle/review-checklist.md"
+sha256 = "c3ff10c174db6b71767cbb95c7a86cba4ff46c50fabc8ac039dad2561c727102"
+
+[[files]]
+path = "2-reporting-bundle/templates/agent-filling-guide.md"
+sha256 = "ee9f83945c20ea33752b38666b09efc0314a51347345d417c71e40fa6b3e889b"
+
+[[files]]
+path = "2-reporting-bundle/templates/vulnerability-report.md"
+sha256 = "f00d06dffcfa98b0c83eb632267ada59722edf1c4d981164be3fd5619c8d7812"
