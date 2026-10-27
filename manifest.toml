@@ -28,6 +28,10 @@ hash_algorithm = "sha256"
 
 # Stage IDs are the file stems. The toolkit has no stable stage IDs of its
 # own (see "Open questions" in docs/toolkit-workflow.md).
+#
+# `order` and `mandatory` apply within a stage's `mode`: a run uses either
+# the staged stages or the one-shot prompt, never both, so the one-shot
+# prompt sharing order 0 with stage 00 is not a clash.
 
 [[stages]]
 id = "00-run-control-and-evidence-model"

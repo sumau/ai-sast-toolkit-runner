@@ -55,13 +55,13 @@ Checked on 2026-10-27 against the pinned commit and the upstream repository:
 
 ### How the runner identifies a toolkit copy
 
-This is decided in `docs/adr/0001-runner-separate-from-toolkit.md` ("Release tags"); this summary is for convenience.
+The first three points below are decided in `docs/adr/0001-runner-separate-from-toolkit.md` ("Release tags"); this summary is for convenience. The last point is a proposal, not yet decided.
 
 Until the toolkit has releases, a toolkit copy is identified by its **commit** (when available) and its **file hashes**. Once releases exist, the release tag is recorded as well, as the prompt-pack version.
 
 - Hashes, not the commit or tag, decide whether a stored result is stale.
 - The runner must keep working from an untagged copy, such as a zip download or a department fork with no git metadata. In that case only the file hashes are recorded.
-- Until a prompt-pack version exists, the runner fills the toolkit's "prompt-pack version" fields with the commit and stage IDs, and says plainly that no release version exists. It never invents a version number.
+- **Proposal (to settle in step 7):** the ADR does not say what fills the toolkit's "prompt-pack version" fields while no release exists. The toolkit records the prompt-pack version and the prompt IDs used as separate fields (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:37-46`, `vendor/gc3-ai-sast-toolkit/CLAUDE.md:35`), so the proposal keeps them separate: the prompt-pack version is the commit, or "unreleased, identified by file hashes only" when there is no commit, and says plainly that no release exists; the prompt IDs are the stage IDs. The runner never invents a version number.
 
 ## Staged mode
 
@@ -78,7 +78,7 @@ All five staged files are listed as "use in order" (`vendor/gc3-ai-sast-toolkit/
 ### Stage 00: run control and evidence model
 
 - **File:** `1-prompts/staged/00-run-control-and-evidence-model.md`
-- **Purpose:** primes the agent before any substantive prompt. It sets the run's boundaries, depth budget, evidence language and anti-drift controls for the whole assessment (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:3`, `vendor/gc3-ai-sast-toolkit/1-prompts/README.md:9`). Its controls override any later prompt that conflicts with them (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:13`), and if a later prompt conflicts, the agent keeps this model and states the conflict (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:242-244`).
+- **Purpose:** primes the agent before any substantive prompt. It fixes the limits, depth budget, evidence vocabulary and drift controls that hold for every later stage (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:3`, `vendor/gc3-ai-sast-toolkit/1-prompts/README.md:9`). Its controls override any later prompt that conflicts with them (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:13`), and if a later prompt conflicts, the agent keeps this model and states the conflict (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:242-244`).
 - **Inputs:** the run scope (thresholds and attacker classes) (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:22`).
 - **Outputs:** no artefact of its own. It defines:
   - the role: the model's output is candidate analysis until a human accepts it (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/00-run-control-and-evidence-model.md:5-9`);
@@ -112,7 +112,7 @@ All five staged files are listed as "use in order" (`vendor/gc3-ai-sast-toolkit/
 ### Stage 02: full SAST and attack-path analysis
 
 - **File:** `1-prompts/staged/02-full-sast-attack-path-prompt.md`
-- **Purpose:** consumes the triage handoff and produces source-evidenced findings, chain analysis, validation requirements and a reporting handoff for stage 03 (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:3`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:164-179`).
+- **Purpose:** takes stage 01's handoff and turns it into findings backed by source evidence, an analysis of chains, what still needs validating, and a handoff that stage 03 reports from (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:3`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:164-179`).
 - **Inputs:** a fixed list of fields from the triage handoff; missing ones are recorded as gaps rather than fabricated (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:143-162`). Before scanning source, the agent must confirm the repository is approved and the copy is local and sanitised, or stop (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:93-103`).
 - **Outputs:**
   - per candidate: the gate results, canonical labels, the negative-control section and a rules-of-engagement block (`vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:28-40`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:53-59`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:63-77`, `vendor/gc3-ai-sast-toolkit/1-prompts/staged/02-full-sast-attack-path-prompt.md:105-116`);
