@@ -9,7 +9,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.scripts]
-sast-run = "ai_sast_toolkit_runner.cli:main"
+ai-sast-run = "ai_sast_toolkit_runner.cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8"]

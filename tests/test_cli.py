@@ -13,4 +13,4 @@ def test_version_flag_prints_version(capsys):
 
 def test_no_arguments_prints_help(capsys):
     assert main([]) == 0
-    assert "usage: sast-run" in capsys.readouterr().out
+    assert "usage: ai-sast-run" in capsys.readouterr().out

@@ -17,7 +17,7 @@ Requires [uv](https://docs.astral.sh/uv/) and Python 3.12 or later.
 ```sh
 uv sync
 uv run pytest
-uv run sast-run --help
+uv run ai-sast-run --help
 ```
 
 ## Licence

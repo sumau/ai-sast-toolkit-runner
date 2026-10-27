@@ -1,4 +1,4 @@
-"""Command-line entry point for ``sast-run``."""
+"""Command-line entry point for ``ai-sast-run``."""
 
 import argparse
 from collections.abc import Sequence
@@ -8,7 +8,7 @@ from ai_sast_toolkit_runner import __version__
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="sast-run",
+        prog="ai-sast-run",
         description="Unofficial runner for the GC3 AI SAST Toolkit workflow.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
