@@ -18,7 +18,7 @@ Which one comes first depends on what departments using the toolkit typically ha
 
 Either way, the runner records and checks each stage exactly as in ADR 0002. Running stages adds to that; it does not replace it.
 
-**Status.** Proposed, not accepted. The details of how each approach is built will be added once the maintainers have answered the questions this decision [depends on](#depends-on-the-maintainers).
+**Status.** Proposed, not accepted. It waits on the maintainers' answers in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1): whether the runner should run stages, what departments have approved, and whether stages share one agent session and how stage 00 is applied. How the chosen approach is built will be added once they have answered.
 
 ## Context
 
@@ -28,14 +28,6 @@ Two constraints shape how the runner could run a stage:
 
 - **The prompts assume an agent that opens files as it goes**, not one that is handed a fixed set of files.
 - **Departments approve different things.** Some have approved a coding agent such as Claude Code or Codex; some have approved direct model access such as Amazon Bedrock; some may have neither.
-
-## Depends on the maintainers
-
-This decision waits on the maintainers' answers to the [proposal](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1#draft-proposal-to-post-upstream), which holds the questions. It depends on:
-
-- whether the runner should run stages, or only record and check stages the reviewer runs by hand
-- what departments using the toolkit typically have approved: a coding agent, direct model access, or both
-- whether stages share one agent session, and how stage 00 is applied. The toolkit's wording leans towards one session (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:9`, `vendor/gc3-ai-sast-toolkit/1-prompts/README.md:27`).
 
 ## Considered options
 
@@ -133,7 +125,7 @@ Building both roughly doubles the stage-running work, so only one is built first
 
 Whichever approach is built:
 
-- The model can read the scan copy and write only to the run folder, with no shell and no network. So stage 02's optional local validation is not possible in runs the runner starts, and no result from them is `locally-validated`.
+- The model can read the scan copy and write only to the run folder, with no shell and no network. So stage 02's optional local validation is not possible in runs the runner starts, and no result from them is `locally-validated`. The maintainers are asked whether that limit is acceptable.
 - The run record names which approach ran each stage, alongside stages run by hand.
 - No test calls a real model.
 
