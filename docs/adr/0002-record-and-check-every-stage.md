@@ -7,7 +7,7 @@ date: 2026-10-29
 
 ## Summary
 
-The runner records, checks and reports on every stage, whatever ran it. This is built first. On its own, it works with stages a reviewer runs by hand in their coding agent. How the runner itself might run stages is a separate decision, in [ADR 0003](0003-how-the-runner-runs-each-stage.md).
+The runner records, checks and reports on every stage, whatever ran it. This is built first, because it is needed whichever way stages are run and is useful with no automation. On its own, it works with stages a reviewer runs by hand in their coding agent. How the runner itself might run stages is a separate decision, in [ADR 0003](0003-how-the-runner-runs-each-stage.md).
 
 ## Context
 
@@ -26,7 +26,9 @@ For every stage, the runner:
 
 ## Considered options
 
-- **Build stage-running first.** Rejected. The checks are needed whichever way stages are run, they are useful with no automation at all, and how stages are run waits on the maintainers (ADR 0003).
+- **Record and check only the stages the runner runs itself.** Rejected. Stages run by hand would have no record, the work would be repeated for each way of running stages, and runs done different ways could not be compared.
+- **Let the coding agent record itself, as the toolkit asks.** Rejected. A model's own report of its version, or of what it read, is not independent. File hashes and citation checks have to come from outside the agent.
+- **Have a model review each stage's outputs instead of mechanical checks.** Rejected. The review would not be repeatable, it would need model access just to check, and it would drift into judging whether findings are correct, which belongs to the reviewer.
 
 ## Consequences
 
