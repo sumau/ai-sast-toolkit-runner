@@ -7,7 +7,7 @@ date: 2026-10-29
 
 ## Summary
 
-The runner records, checks and reports on every stage of a review. The reviewer runs each stage in their coding agent as the toolkit describes, and the runner works from what the stage left behind: its outputs, its session transcript, the toolkit copy and the scan copy. This needs no model access and changes nothing about how the reviewer works.
+The runner records, checks and reports on every stage of a review. The toolkit expects a reviewer to run each stage in a coding agent (`vendor/gc3-ai-sast-toolkit/README.md:3`, `vendor/gc3-ai-sast-toolkit/README.md:13-38`). However a stage was run, the runner works from what it left behind: its outputs, its session transcript where available, the toolkit copy and the scan copy. This needs no model access and changes nothing about how the reviewer works.
 
 ## Context
 
