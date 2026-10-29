@@ -7,12 +7,14 @@ date: 2026-10-28
 
 ## Summary
 
-**Proposal.** Build the parts that record, check and report on stages first. On their own, these make up the **recorder**. Then add one way for the runner to run stages itself:
+**Proposal.** Build the parts that record, check and report on stages first. On their own, these make up the **recorder**. Then add one of two ways for the runner to run stages itself:
 
-- the **conductor**, which launches the department's approved coding agent, by default
-- the **runner-owned agent loop**, which calls the model directly, instead, if departments using the toolkit typically have approved direct model access
+- the **conductor**, which launches the department's approved coding agent
+- the **runner-owned agent loop**, which calls the model directly
 
-**Status.** Proposed, not accepted. The details of how each approach is built will be added once the maintainers have answered the [questions below](#questions-for-the-maintainers).
+Which one comes first depends on what departments using the toolkit typically have approved, which the maintainers are asked.
+
+**Status.** Proposed, not accepted. The details of how each approach is built will be added once the maintainers have answered the questions this decision [depends on](#depends-on-the-maintainers).
 
 ## Context
 
@@ -23,18 +25,20 @@ The runner needs a way to run each stage prompt against the scan copy. Two const
 
 Whichever way runs a stage, the runner should give every run a consistent procedure, enforced permissions and an audit trail, without making methodological choices the toolkit does not define. The reviewer decides whether to run the next stage.
 
-## Questions for the maintainers
+## Depends on the maintainers
 
-1. Do you want a tool like this at all?
-2. Should the runner run stages, whether by launching the coding agent (the conductor) or through its own agent loop, or only record and check stages the reviewer runs by hand (the recorder)?
-3. What do departments using the toolkit typically have approved: a coding agent such as Claude Code or Codex, direct model access such as Amazon Bedrock, or both? If you do not know, who would?
-4. Should stages share one agent session, or start a fresh session each? Is stage 00 a separate turn, or context sent with every later stage? The toolkit's wording leans towards one session (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:9`, `vendor/gc3-ai-sast-toolkit/1-prompts/README.md:27`).
+This decision waits on the maintainers' answers to the [proposal](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1#draft-proposal-to-post-upstream), which holds the questions. It depends on:
+
+- whether they want a tool like this at all
+- whether the runner should run stages, or only record and check stages the reviewer runs by hand
+- what departments using the toolkit typically have approved: a coding agent, direct model access, or both
+- whether stages share one agent session, and how stage 00 is applied. The toolkit's wording leans towards one session (`vendor/gc3-ai-sast-toolkit/1-prompts/README.md:9`, `vendor/gc3-ai-sast-toolkit/1-prompts/README.md:27`).
 
 ## Considered options
 
 - **Recorder (built first; fallback).** The reviewer runs every stage by hand in their coding agent. The runner records versions, imports the agent's session transcript, checks outputs and drafts reports.
-- **Conductor (default).** The runner launches the reviewer's coding agent, inside an isolated sandbox, with the stage prompt. The agent reads the scan copy and writes its outputs to a run folder. The runner holds no model credentials. This automates the setup the toolkit already describes (`vendor/gc3-ai-sast-toolkit/README.md:13-38`).
-- **Runner-owned agent loop (alternative).** The runner gives the model its own tools (list, read and search within the scan copy; write within the run folder) and runs the tool-use loop itself, calling the model directly.
+- **Conductor (candidate).** The runner launches the reviewer's coding agent, inside an isolated sandbox, with the stage prompt. The agent reads the scan copy and writes its outputs to a run folder. The runner holds no model credentials. This automates the setup the toolkit already describes (`vendor/gc3-ai-sast-toolkit/README.md:13-38`).
+- **Runner-owned agent loop (candidate).** The runner gives the model its own tools (list, read and search within the scan copy; write within the run folder) and runs the tool-use loop itself, calling the model directly.
 - **Single-call orchestrator (rejected).** The runner sends each stage prompt and a selection of files to a model in one call per stage.
 
 ```mermaid
@@ -56,7 +60,7 @@ flowchart LR
         r_run -- "records and checks<br/>outputs and transcript" --> r_out
     end
 
-    subgraph con ["Conductor (default)"]
+    subgraph con ["Conductor (candidate)"]
         direction TB
         c_scan@{ shape: docs, label: "Scan copy" }
         c_out@{ shape: docs, label: "Run folder" }
@@ -69,7 +73,7 @@ flowchart LR
         c_run -- "records and checks<br/>outputs and transcript" --> c_out
     end
 
-    subgraph own ["Runner-owned agent loop (alternative)"]
+    subgraph own ["Runner-owned agent loop (candidate)"]
         direction TB
         l_rev(["👤 Reviewer"])
         l_scan@{ shape: docs, label: "Scan copy" }
@@ -113,7 +117,7 @@ flowchart LR
 
 **Conductor or runner-owned agent loop.** The deciding difference is which program sends the department's source code to the model. With the conductor, it is the coding agent the department has already approved. With the agent loop, it is the runner, which needs its own approval unless the department already trusts a direct model endpoint such as Amazon Bedrock.
 
-On technical grounds, the agent loop is the better design: permissions hold by construction, the runner records every file read itself, and it can be tested deterministically. The conductor is the default because it needs only an approved coding agent, at the cost of depending on agents the runner does not control and on a correctly set up sandbox.
+On technical grounds, the agent loop is the better design: permissions hold by construction, the runner records every file read itself, and it can be tested deterministically. The conductor needs only an approved coding agent, at the cost of depending on agents the runner does not control and on a correctly set up sandbox. So the choice turns on what departments have approved, not on the design.
 
 Building both roughly doubles the stage-running work, so only one is built first, behind an interface that leaves room for the other.
 
@@ -133,10 +137,10 @@ Whichever approach is built:
 
 ## When to decide or revisit
 
-Decide which way of running stages to build first when the maintainers answer question 3, and fill in how it is built at that point.
+Decide which way of running stages to build first when the maintainers say what departments typically have approved, and fill in how it is built at that point.
 
 Revisit this decision if:
 
 - the maintainers prefer no automation (fall back to the recorder) or no tool at all (archive the runner)
-- no supported agent can be held to the permissions above (move to the runner-owned agent loop where direct model access allows)
+- no supported agent can be held to the permissions above (rule out the conductor, and use the runner-owned agent loop where direct model access allows)
 - departments that need the other approach start using the runner (build the second way of running stages)
