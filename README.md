@@ -2,7 +2,7 @@
 
 > An unofficial, community runner for the GC3 AI SAST Toolkit. It is not produced or endorsed by the toolkit's maintainers.
 
-A Python command-line tool that makes reviews using the GC3 AI SAST Toolkit's staged workflow easier to carry out and audit. It makes the procedure repeatable, although the model's output is not. It works with the toolkit's existing prompts, evidence model and reporting bundle. It does not replace or change the methodology.
+A Python command-line tool to run the GC3 AI SAST Toolkit easily, consistently and auditably. It makes the procedure repeatable, although the model's output is not. It works with the toolkit's existing prompts, evidence model and reporting bundle. It does not replace or change the methodology.
 
 Status: early development. Nothing here is usable for a real review yet.
 

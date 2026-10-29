@@ -9,7 +9,7 @@ from ai_sast_toolkit_runner import __version__
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="ai-sast-run",
-        description="Unofficial runner for the GC3 AI SAST Toolkit workflow.",
+        description="Unofficial tool to run the GC3 AI SAST Toolkit easily, consistently and auditably.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     return parser

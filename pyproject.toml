@@ -1,7 +1,7 @@
 [project]
 name = "ai-sast-toolkit-runner"
 version = "0.1.0"
-description = "Unofficial CLI runner for the GC3 AI SAST Toolkit workflow."
+description = "Unofficial command-line tool to run the GC3 AI SAST Toolkit easily, consistently and auditably."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]

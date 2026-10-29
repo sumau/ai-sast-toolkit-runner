@@ -1,4 +1,4 @@
-"""Unofficial CLI runner for the GC3 AI SAST Toolkit workflow."""
+"""Unofficial command-line tool to run the GC3 AI SAST Toolkit easily, consistently and auditably."""
 
 from importlib.metadata import version
 
