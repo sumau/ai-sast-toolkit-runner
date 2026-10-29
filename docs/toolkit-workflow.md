@@ -138,7 +138,7 @@ Checked on 2026-10-27 against the pinned commit and the upstream repository:
 
 ### How the runner identifies a toolkit copy
 
-This is decided in `docs/adr/0001-runner-separate-from-toolkit.md` ("Release tags"). What fills the toolkit's prompt-pack version fields while no release exists is open, under step 7 in issue #2.
+This is decided in `docs/adr/0001-runner-separate-from-toolkit.md` ("Release tags").
 
 ## Staged mode
 
@@ -226,7 +226,7 @@ The staged order is linear, but stages 01 to 03 and the one-shot prompt each end
 - The one-shot prompt ends by recommending one of five next steps, one of which is to re-run with the staged pack (`1-prompts/one-shot-minimum-sast-prompt.md:306-314`).
 - After remediation, the relevant staged prompt is re-run against the fixed code (`2-reporting-bundle/reporting-standards.md:158-160`).
 
-The toolkit does not say how these recommendations map onto re-running stages. The question is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1); how the runner handles these recommendations is under steps 2 and 5 in issue #2.
+The toolkit does not say how these recommendations map onto re-running stages. The question is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
 
 ## One-shot mode
 
@@ -336,7 +336,4 @@ The guide's ground rules apply throughout: apply the run scope's threshold, no c
 
 ## Open questions
 
-Open questions are tracked in issues, not in this document:
-
-- **For the toolkit maintainers:** [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1). Releases, stable prompt IDs and the licence are in its draft upstream proposal; questions about the methodology itself are under "Methodology questions for the maintainers".
-- **For the runner's design:** issue #2, listed as "Open from step 1" under the step each one affects.
+Open questions for the toolkit maintainers are tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1), not in this document. Releases, stable prompt IDs and the licence are in its draft upstream proposal; questions about the methodology itself are under "Methodology questions for the maintainers".
