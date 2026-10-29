@@ -336,4 +336,4 @@ The guide's ground rules apply throughout: apply the run scope's threshold, no c
 
 ## Open questions
 
-Open questions for the toolkit maintainers are tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1), not in this document. Releases, stable prompt IDs and the licence are in its draft upstream proposal; questions about the methodology itself are under "Methodology questions for the maintainers".
+Open questions for the toolkit maintainers are tracked outside this document. Those already asked, including releases, stability and the licence, are in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1). The remaining methodology questions and planned upstream PRs, such as stable stage IDs, are tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
