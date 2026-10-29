@@ -41,7 +41,7 @@ This decision waits on the maintainers' answers to the [proposal](https://github
 
 In every option, the run folder is recorded and checked as in ADR 0002.
 
-- **By hand (ADR 0002 alone).** The reviewer runs every stage in their coding agent. The runner does not run stages.
+- **By hand (ADR 0002 alone).** The reviewer runs every stage in their coding agent, then has the runner record and check it. The runner does not run stages.
 - **Conductor (candidate).** The runner launches the reviewer's coding agent, inside an isolated sandbox, with the stage prompt. The agent reads the scan copy and writes its outputs to a run folder. The runner holds no model credentials. This automates the setup the toolkit already describes (`vendor/gc3-ai-sast-toolkit/README.md:13-38`).
 - **Runner-owned agent loop (candidate).** The runner gives the model its own tools (list, read and search within the scan copy; write within the run folder) and runs the tool-use loop itself, calling the model directly.
 - **Single-call orchestrator (rejected).** The runner sends each stage prompt and a selection of files to a model in one call per stage.
@@ -61,6 +61,8 @@ flowchart LR
         h_agent -- "prompt and file contents" --> h_model("Model")
         h_model -- "tool requests" --> h_agent
         h_agent -- "writes outputs" --> h_out
+        h_rev -- "has each stage recorded" --> h_run["⚙️ Runner"]
+        h_run -- "records and checks" --> h_out
     end
 
     subgraph con ["Conductor (candidate)"]
