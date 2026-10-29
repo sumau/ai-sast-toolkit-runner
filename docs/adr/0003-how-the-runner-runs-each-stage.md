@@ -18,7 +18,7 @@ Which one comes first depends on what departments using the toolkit typically ha
 
 Either way, the runner records and checks each stage exactly as in ADR 0002. Running stages adds to that; it does not replace it.
 
-**Status.** Proposed, not accepted. It waits on the maintainers' answers in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1): whether the runner should run stages, what departments have approved, and whether stages share one agent session and how stage 00 is applied. How the chosen approach is built will be added once they have answered.
+**Status.** Proposed, not accepted. It waits on the maintainers' answers to whether the runner should run stages and what departments have approved. Whether stages share one agent session and how stage 00 is applied will also shape how it is built. How the chosen approach is built will be added once they have answered.
 
 ## Context
 
