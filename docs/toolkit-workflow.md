@@ -226,7 +226,7 @@ The staged order is linear, but stages 01 to 03 and the one-shot prompt each end
 - The one-shot prompt ends by recommending one of five next steps, one of which is to re-run with the staged pack (`1-prompts/one-shot-minimum-sast-prompt.md:306-314`).
 - After remediation, the relevant staged prompt is re-run against the fixed code (`2-reporting-bundle/reporting-standards.md:158-160`).
 
-The toolkit does not say how these recommendations map onto re-running stages. The question is asked upstream in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1).
+The toolkit does not say how these recommendations map onto re-running stages. This is an open question for the maintainers.
 
 ## One-shot mode
 
@@ -269,7 +269,7 @@ Related closed vocabularies:
 
 The same four families are restated, almost word for word, in the one-shot prompt (`1-prompts/one-shot-minimum-sast-prompt.md:43-90`) and as the allowed values of the report template's evidence-status table (`2-reporting-bundle/templates/vulnerability-report.md:144-154`). Stage 03 requires them in an evidence classification table in every report (`1-prompts/staged/03-security-reporting-output-prompt.md:28-49`), and stage 04 normalises near-synonyms to them (`1-prompts/staged/04-normalisation-and-qa-prompt.md:99-114`).
 
-Several other label sets appear elsewhere and do not map cleanly onto stage 00. How they map onto stage 00's labels is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
+Several other label sets appear elsewhere and do not map cleanly onto stage 00. How they map onto stage 00's labels is an open question for the maintainers.
 
 ## Candidates, promotion and confirmation
 
@@ -292,7 +292,7 @@ The candidate diagram above covers the lifecycle, the promotion gate and both ne
 - **In the report template:** four generic prompts G1 to G4 (`2-reporting-bundle/templates/vulnerability-report.md:201-229`), twelve type-specific prompts (`2-reporting-bundle/templates/vulnerability-report.md:231-319`), and the mandatory negative-control prompt (`2-reporting-bundle/templates/vulnerability-report.md:321-328`).
 - **Self-confirmation** is allowed but must be flagged, and is a weaker signal (`2-reporting-bundle/templates/agent-filling-guide.md:99`, `2-reporting-bundle/templates/agent-filling-guide.md:105`, `2-reporting-bundle/templates/vulnerability-report.md:193-199`, `CLAUDE.md:34`).
 
-The minimum number of confirmation prompts differs between files; which one is binding is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
+The minimum number of confirmation prompts differs between files; which one is binding is an open question for the maintainers.
 
 ## The reporting bundle
 
@@ -305,7 +305,7 @@ The minimum number of confirmation prompts differs between files; which one is b
 
 ### When the template is filled
 
-When the template is filled, and how it relates to stage 03 and the one-shot prompt, is in CL6 to CL9 and CL11. Stage 03's own Markdown human report per finding has a different structure: a decision snapshot, a human summary and eighteen required sections, against the template's seventeen (`1-prompts/staged/03-security-reporting-output-prompt.md:381-418`). The two overlap (evidence status, disclosure status, confirmation, remediation, validation, claims control) but are not the same document. How they relate is asked upstream in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1).
+When the template is filled, and how it relates to stage 03 and the one-shot prompt, is in CL6 to CL9 and CL11. Stage 03's own Markdown human report per finding has a different structure: a decision snapshot, a human summary and eighteen required sections, against the template's seventeen (`1-prompts/staged/03-security-reporting-output-prompt.md:381-418`). The two overlap (evidence status, disclosure status, confirmation, remediation, validation, claims control) but are not the same document. How they relate is an open question for the maintainers.
 
 The guide needs five inputs before starting, and says to ask the human reviewer if any is missing (`2-reporting-bundle/templates/agent-filling-guide.md:17-27`): the target repository and commit, the suspected finding, the team and reporter identity, the tool, model and prompt-pack identity, and the run scope.
 
@@ -336,4 +336,4 @@ The guide's ground rules apply throughout: apply the run scope's threshold, no c
 
 ## Open questions
 
-Open questions for the toolkit maintainers are tracked outside this document. Those already asked, including releases, stability and the licence, are in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1). The remaining methodology questions and planned upstream PRs, such as stable stage IDs, are tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
+Open questions for the toolkit maintainers, including releases, stability and the licence, are tracked outside this document, alongside planned upstream PRs such as stable stage IDs.
