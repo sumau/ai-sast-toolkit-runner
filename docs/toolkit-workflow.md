@@ -226,7 +226,7 @@ The staged order is linear, but stages 01 to 03 and the one-shot prompt each end
 - The one-shot prompt ends by recommending one of five next steps, one of which is to re-run with the staged pack (`1-prompts/one-shot-minimum-sast-prompt.md:306-314`).
 - After remediation, the relevant staged prompt is re-run against the fixed code (`2-reporting-bundle/reporting-standards.md:158-160`).
 
-The toolkit does not say how these recommendations map onto re-running stages. The question is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
+The toolkit does not say how these recommendations map onto re-running stages. The question is asked upstream in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1).
 
 ## One-shot mode
 
@@ -305,7 +305,7 @@ The minimum number of confirmation prompts differs between files; which one is b
 
 ### When the template is filled
 
-When the template is filled, and how it relates to stage 03 and the one-shot prompt, is in CL6 to CL9 and CL11. Stage 03's own Markdown human report per finding has a different structure: a decision snapshot, a human summary and eighteen required sections, against the template's seventeen (`1-prompts/staged/03-security-reporting-output-prompt.md:381-418`). The two overlap (evidence status, disclosure status, confirmation, remediation, validation, claims control) but are not the same document. How they relate is tracked in [sumau/GC3-AI-SAST-Toolkit#1](https://github.com/sumau/GC3-AI-SAST-Toolkit/issues/1).
+When the template is filled, and how it relates to stage 03 and the one-shot prompt, is in CL6 to CL9 and CL11. Stage 03's own Markdown human report per finding has a different structure: a decision snapshot, a human summary and eighteen required sections, against the template's seventeen (`1-prompts/staged/03-security-reporting-output-prompt.md:381-418`). The two overlap (evidence status, disclosure status, confirmation, remediation, validation, claims control) but are not the same document. How they relate is asked upstream in [uk-gov-cyber/GC3-AI-SAST-Toolkit#1](https://github.com/uk-gov-cyber/GC3-AI-SAST-Toolkit/issues/1).
 
 The guide needs five inputs before starting, and says to ask the human reviewer if any is missing (`2-reporting-bundle/templates/agent-filling-guide.md:17-27`): the target repository and commit, the suspected finding, the team and reporter identity, the tool, model and prompt-pack identity, and the run scope.
 
